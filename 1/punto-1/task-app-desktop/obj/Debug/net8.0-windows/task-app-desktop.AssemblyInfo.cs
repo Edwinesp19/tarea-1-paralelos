@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("task-app-desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8492869ab5e28015357164a10d3f600e82f3d541")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b8c80e18a2bdec0e945313b4b8d1c738746eb62")]
 [assembly: System.Reflection.AssemblyProductAttribute("task-app-desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("task-app-desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

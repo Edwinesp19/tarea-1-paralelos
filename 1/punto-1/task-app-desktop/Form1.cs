@@ -1,5 +1,12 @@
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 using MySql.Data.MySqlClient;
 using System.Data;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.IO;
+using Font = System.Drawing.Font;
+
 namespace task_app_desktop
 
 {
@@ -98,7 +105,6 @@ namespace task_app_desktop
             // Ajustar ancho de las columnas
             dgv_tasks.Columns["id"].Width = 50;
             dgv_tasks.Columns["description"].Width = 250;
-            dgv_tasks.Columns["status_name"].Width = 150;
 
 
 
@@ -321,7 +327,68 @@ namespace task_app_desktop
 
         private void button2_Click(object sender, EventArgs e)
         {
+            // Definir la carpeta donde se guardará el archivo PDF
+            string directoryPath = Path.Combine(Application.StartupPath, "ExportedPDFs");
 
+            // Verificar si la carpeta existe, si no, crearla
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            // Definir el nombre del archivo PDF
+            //string fileName = "Tareas_Exportadas.pdf"; // O cualquier nombre que desees
+            string fileName = "Tareas_Exportadas_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".pdf";
+
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            // Crear el documento PDF
+            Document doc = new Document(PageSize.A4);
+            try
+            {
+                // Crear un PdfWriter para el archivo PDF
+                PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+
+                // Abrir el documento
+                doc.Open();
+
+                // Crear la tabla con el número de columnas igual al número de columnas del DataGridView
+                PdfPTable pdfTable = new PdfPTable(dgv_tasks.Columns.Count);
+
+                // Agregar los encabezados de columna al PDF
+                foreach (DataGridViewColumn column in dgv_tasks.Columns)
+                {
+                    PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
+                    cell.BackgroundColor = BaseColor.LIGHT_GRAY; // Color de fondo de los encabezados
+                    pdfTable.AddCell(cell);
+                }
+
+                // Agregar las filas de datos
+                foreach (DataGridViewRow row in dgv_tasks.Rows)
+                {
+                    // Solo agregar filas que no estén vacías
+                    if (!row.IsNewRow)
+                    {
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            pdfTable.AddCell(cell.Value?.ToString() ?? ""); // Agregar el valor de la celda, si está vacío agregamos un string vacío
+                        }
+                    }
+                }
+
+                // Agregar la tabla al documento PDF
+                doc.Add(pdfTable);
+
+                // Cerrar el documento
+                doc.Close();
+
+                // Notificar al usuario
+                MessageBox.Show("Archivo PDF exportado exitosamente en: " + filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al exportar a PDF: " + ex.Message);
+            }
         }
     }
 }

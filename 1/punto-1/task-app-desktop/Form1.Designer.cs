@@ -45,12 +45,12 @@
             Tareas = new TabPage();
             dgv_tasks = new DataGridView();
             panel2 = new Panel();
+            button2 = new Button();
             label6 = new Label();
             TareasForm = new TabPage();
             txtId = new TextBox();
             panel1 = new Panel();
             button1 = new Button();
-            button2 = new Button();
             tabControl1.SuspendLayout();
             Tareas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_tasks).BeginInit();
@@ -76,7 +76,7 @@
             txtTitle.Margin = new Padding(3, 4, 3, 4);
             txtTitle.Multiline = true;
             txtTitle.Name = "txtTitle";
-            txtTitle.PlaceholderText = "escribe algo...";
+            txtTitle.PlaceholderText = " Escribe algo...";
             txtTitle.Size = new Size(457, 124);
             txtTitle.TabIndex = 1;
             // 
@@ -253,6 +253,22 @@
             panel2.Size = new Size(1145, 97);
             panel2.TabIndex = 14;
             // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            button2.BackColor = Color.DarkOrange;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button2.ForeColor = Color.White;
+            button2.Location = new Point(959, 25);
+            button2.Margin = new Padding(3, 4, 3, 4);
+            button2.Name = "button2";
+            button2.Size = new Size(156, 49);
+            button2.TabIndex = 13;
+            button2.Text = "Exportar en PDF";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // label6
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -326,22 +342,6 @@
             button1.Text = "Nueva";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click_1;
-            // 
-            // button2
-            // 
-            button2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            button2.BackColor = Color.DarkOrange;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(949, 25);
-            button2.Margin = new Padding(3, 4, 3, 4);
-            button2.Name = "button2";
-            button2.Size = new Size(156, 49);
-            button2.TabIndex = 13;
-            button2.Text = "Exportar en PDF";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
             // 
             // Form1
             // 
