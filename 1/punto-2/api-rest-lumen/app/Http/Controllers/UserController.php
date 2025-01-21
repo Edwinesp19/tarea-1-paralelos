@@ -20,6 +20,8 @@ class UserController extends Controller
             'status' => 'success',
             'data' => $users
         ], 200);
+
+
     }
 
     /**
