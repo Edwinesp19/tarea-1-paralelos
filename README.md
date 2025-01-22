@@ -4,7 +4,7 @@
   Sistema de Facturación en el que puedan consultar datos de una BD y al mismo tiempo 
   guardar la factura, actualizar el inventario, actualizar el balance del cliente y
   envio del reporte por correo electrónico (Este ejemplo ya no es valido, buscar una opción parecida)).
-  Todos estos procesos se deben realizar en paralelos para usar la cpu. 
+  Todos estos procesos se deben realizar en paralelos para usar la cpu.  
 
 # 2) Crear una app en android o ios con NativeScript Vue en la que tenga lo siguiente:
    
