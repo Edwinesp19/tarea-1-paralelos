@@ -178,9 +178,11 @@ async fn get_task(id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpRespo
     
     let task: Option<(i32, String, String, i32, String, String, String)> = conn
         .exec_first(
-            "SELECT t.id, t.title, t.description, t.status_id, ts.name as status, t.date_from, t.due_date 
-            FROM tasks t 
-            JOIN task_statuses ts ON t.status_id = ts.id 
+            r"SELECT t.id, t.title, t.description, t.status_id, ts.name as status,
+            DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from,
+            DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date
+            FROM tasks t
+            JOIN task_statuses ts ON t.status_id = ts.id
             WHERE t.id = ?",
             (id.into_inner(),)
         )
@@ -214,9 +216,11 @@ async fn get_all_tasks(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     
     let tasks: Vec<(i32, String, String, i32, String, String, String)> = conn
         .exec(
-            "SELECT t.id, t.title, t.description, t.status_id, ts.name as status, t.date_from, t.due_date 
-            FROM tasks t 
-            JOIN task_statuses ts ON t.status_id = ts.id 
+            r"SELECT t.id, t.title, t.description, t.status_id, ts.name as status,
+            DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from,
+            DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date
+            FROM tasks t
+            JOIN task_statuses ts ON t.status_id = ts.id
             ORDER BY t.id",
             ()
         )
