@@ -47,9 +47,5 @@ public class MainRepository {
         void onFailure(Throwable t);
     }
 
-    public interface IDrinkCallback {
-        void onDrinkSuggested(String drinkName);
-        void onErrorOccurred();
-    }
 
 }

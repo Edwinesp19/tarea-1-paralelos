@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.content.Intent;
 
 import com.example.taskappparalelos.R;
 import java.util.Random;
@@ -54,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(String s) {
                 tvLoginResult.setText(s);
+
+                if(s == "Login Success"){
+                    Intent intent = new Intent(MainActivity.this, TaskActivity.class);
+
+                    // Agregar datos al intent (opcional)
+                    intent.putExtra("username", "Edwin");
+
+                    // Iniciar TaskActivity
+                    startActivity(intent);
+                }
             }
         });
 
