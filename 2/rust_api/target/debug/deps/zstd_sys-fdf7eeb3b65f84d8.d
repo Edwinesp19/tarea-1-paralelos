@@ -1,0 +1,9 @@
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/libzstd_sys-fdf7eeb3b65f84d8.rmeta: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zstd.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zdict.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/libzstd_sys-fdf7eeb3b65f84d8.rlib: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zstd.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zdict.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/zstd_sys-fdf7eeb3b65f84d8.d: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zstd.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zdict.rs
+
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/lib.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zstd.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zstd-sys-2.0.13+zstd.1.5.6/src/bindings_zdict.rs:

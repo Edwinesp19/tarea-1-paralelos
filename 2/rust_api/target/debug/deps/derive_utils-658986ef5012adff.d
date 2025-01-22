@@ -1,0 +1,10 @@
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/libderive_utils-658986ef5012adff.rmeta: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/error.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/ast.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/parse.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/libderive_utils-658986ef5012adff.rlib: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/error.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/ast.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/parse.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/derive_utils-658986ef5012adff.d: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/error.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/ast.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/parse.rs
+
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/lib.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/error.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/ast.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_utils-0.15.0/src/parse.rs:

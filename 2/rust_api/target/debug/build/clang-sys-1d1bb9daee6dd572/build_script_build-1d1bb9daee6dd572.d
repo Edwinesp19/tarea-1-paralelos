@@ -1,0 +1,9 @@
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/build/clang-sys-1d1bb9daee6dd572/build_script_build-1d1bb9daee6dd572: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/macros.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/common.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/dynamic.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/static.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/build/clang-sys-1d1bb9daee6dd572/build_script_build-1d1bb9daee6dd572.d: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/macros.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/common.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/dynamic.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/static.rs
+
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/macros.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/common.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/dynamic.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/clang-sys-1.8.1/build/static.rs:

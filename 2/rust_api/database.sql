@@ -1,0 +1,49 @@
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS rest_db;
+USE rest_db;
+
+-- Eliminar tablas existentes si existen
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS task_statuses;
+DROP TABLE IF EXISTS users;
+
+-- Crear tabla de usuarios con esquema actualizado
+CREATE TABLE users (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Añadir índice para búsquedas por email
+CREATE INDEX idx_users_email ON users(email);
+
+-- Crear tabla de estados de tareas
+CREATE TABLE task_statuses (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insertar estados iniciales
+INSERT INTO task_statuses (name) VALUES 
+    ('Pendiente'),
+    ('Completado');
+
+-- Crear tabla de tareas
+CREATE TABLE tasks (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    status_id BIGINT UNSIGNED NOT NULL,
+    date_from DATE NOT NULL,
+    due_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (status_id) REFERENCES task_statuses(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Añadir índices para búsquedas frecuentes
+CREATE INDEX idx_tasks_status ON tasks(status_id);
+CREATE INDEX idx_tasks_dates ON tasks(date_from, due_date);
