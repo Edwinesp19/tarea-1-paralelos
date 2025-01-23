@@ -1,6 +1,7 @@
 package com.example.taskappparalelos.repository;
 
 import com.example.taskappparalelos.api.ITaskService;
+import com.example.taskappparalelos.model.TaskBody;
 import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.network.RetrofitClientInstance;
 
@@ -36,5 +37,55 @@ public class TaskRepository {
                 taskResponse.onFailure(t);
             }
         });
+    }
+
+    public void saveTask(TaskBody taskBody, ITaskFormResponse taskResponse) {
+        ITaskService taskService = RetrofitClientInstance.getInstance().create(ITaskService.class);
+        Call<Void> saveTaskCall = taskService.saveTask(taskBody);
+
+        saveTaskCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    taskResponse.onSuccess("Tarea creada correctamente");
+                } else {
+                    taskResponse.onFailure(new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                taskResponse.onFailure(t);
+            }
+        });
+    }
+
+    public void updateTask(int taskId, TaskBody taskBody, ITaskFormResponse taskResponse) {
+        ITaskService taskService = RetrofitClientInstance.getInstance().create(ITaskService.class);
+        Call<Void> updateTaskCall = taskService.updateTask(taskId, taskBody);
+
+        updateTaskCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    taskResponse.onSuccess("Tarea actualizada correctamente");
+                } else {
+                    taskResponse.onFailure(new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                taskResponse.onFailure(t);
+            }
+        });
+    }
+
+
+
+
+    public interface ITaskFormResponse {
+        void onSuccess(String message);
+        void onFailure(Throwable t);
     }
 }

@@ -29,6 +29,8 @@ public class TaskActivity extends AppCompatActivity {
     private LinearLayout taskContainer;
     private ProgressBar progressBar;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,17 @@ public class TaskActivity extends AppCompatActivity {
 
         // Fetch tasks on Activity start
         mViewModel.fetchTasks();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Verificar si el intent contiene la señal de recarga
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("refresh") && intent.getBooleanExtra("refresh", false)) {
+            mViewModel.fetchTasks();
+        }
     }
 
     private void displayTasks(List<TaskResponse.Task> tasks) {
