@@ -32,7 +32,7 @@ public class TaskFormActivity extends AppCompatActivity {
     EditText etTaskDueDate;
     ProgressBar progressBar;
 
-
+    TextView tvTaskFormTitle;
     Spinner spStatusId;
 
     TaskFormViewModel mViewModel;
@@ -49,6 +49,8 @@ public class TaskFormActivity extends AppCompatActivity {
         Task task = getIntent().getParcelableExtra("task");
 
         if (task != null) {
+
+
             // Usa los datos del objeto Task
             etTaskTitle = findViewById(R.id.etTaskTitle);
             etTaskDescription = findViewById(R.id.etTaskDescription);
@@ -58,7 +60,9 @@ public class TaskFormActivity extends AppCompatActivity {
             spStatusId = findViewById(R.id.spStatusId);
             progressBar = findViewById(R.id.progressBar);
             bUpdateTask = findViewById(R.id.bUpdateTask);
+            tvTaskFormTitle= findViewById(R.id.tvTaskFormTitle);
             taskIdToUpdate = task.getId();
+
 
 
             mViewModel = new ViewModelProvider(this).get(TaskFormViewModel.class);
@@ -68,6 +72,7 @@ public class TaskFormActivity extends AppCompatActivity {
             etTaskDescription.setText(task.getDescription());
             etTaskDateFrom.setText(task.getDateFrom());
             etTaskDueDate.setText(task.getDueDate());
+            tvTaskFormTitle.setText("Tarea #"+task.getId());
 
 
             // Abrir DatePicker para "Date From"
@@ -102,6 +107,7 @@ public class TaskFormActivity extends AppCompatActivity {
                 }
             });
         }
+
     }
 
     private void showDatePickerDialog(EditText editText) {
