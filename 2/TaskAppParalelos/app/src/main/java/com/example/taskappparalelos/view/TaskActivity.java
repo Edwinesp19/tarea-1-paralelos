@@ -21,10 +21,10 @@ import com.example.taskappparalelos.model.Task;
 import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.viewmodel.TaskViewModel;
 
+
 import java.util.List;
 
 public class TaskActivity extends AppCompatActivity {
-
     private TaskViewModel mViewModel;
     private LinearLayout taskContainer;
     private ProgressBar progressBar;
@@ -63,20 +63,24 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
+
+
         // Fetch tasks on Activity start
         mViewModel.fetchTasks();
+
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        // Verificar si el intent contiene la señal de recarga
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("refresh") && intent.getBooleanExtra("refresh", false)) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Recargar la lista de tareas
             mViewModel.fetchTasks();
         }
     }
+
+
 
     private void displayTasks(List<TaskResponse.Task> tasks) {
         taskContainer.removeAllViews(); // Limpia las vistas anteriores
@@ -96,7 +100,7 @@ public class TaskActivity extends AppCompatActivity {
             tvTitle.setText(task.getTitle());
             tvDescription.setText(task.getDescription());
             tvDueDate.setText("Due: " + task.getDueDate());
-            tvStatus.setText("Status: " + task.getStatus());
+            tvStatus.setText(task.getStatus());
 
             Task taskData = new Task(
                     task.getId(),
@@ -108,14 +112,16 @@ public class TaskActivity extends AppCompatActivity {
                     task.getStatusId()
             );
 
+            //navegar a la pantalla de fomulario
             taskView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
                     intent.putExtra("task", taskData);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1); // Código de solicitud 1
                 }
             });
+
 
             // Añade la vista al contenedor
             taskContainer.addView(taskView);

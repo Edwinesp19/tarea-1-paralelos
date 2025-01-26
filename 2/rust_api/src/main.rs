@@ -525,6 +525,23 @@ async fn register(user: web::Json<User>, pool: web::Data<Pool>) -> Result<HttpRe
     }))
 }
 
+async fn get_task_statuses(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    let mut conn = pool.get_conn()
+        .map_err(|e| ApiError::DbError(e))?;
+    
+    let statuses: Vec<TaskStatus> = conn
+        .query_map(
+            "SELECT id, name FROM task_statuses ORDER BY id",
+            |(id, name)| TaskStatus { id, name }
+        )
+        .map_err(|e| ApiError::DbError(e))?;
+    
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "success": true,
+        "statuses": statuses
+    })))
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Load environment variables from .env file
@@ -559,7 +576,8 @@ async fn main() -> std::io::Result<()> {
     log::info!("  GET /api/tasks/{{id}} - Get task details");
     log::info!("  PUT /api/tasks/{{id}} - Update task");
     log::info!("  DELETE /api/tasks/{{id}} - Delete task");
-    
+    log::info!("  GET /api/taskStatuses - Get all task statuses");
+
     HttpServer::new(move || {
         // Log task routes registration
         log::debug!("Registering task routes:");
@@ -568,6 +586,7 @@ async fn main() -> std::io::Result<()> {
         log::debug!("  GET /api/tasks/{{id}} -> get_task");
         log::debug!("  PUT /api/tasks/{{id}} -> update_task");
         log::debug!("  DELETE /api/tasks/{{id}} -> delete_task");
+        log::debug!("  GET /api/taskStatuses -> get_task_statuses");
 
         App::new()
             .wrap(Logger::default())
@@ -629,6 +648,9 @@ async fn main() -> std::io::Result<()> {
                             "create": "POST /api/tasks",
                             "update": "PUT /api/tasks/{id}",
                             "delete": "DELETE /api/tasks/{id}"
+                        },
+                        "taskStatuses": {
+                            "list": "GET /api/taskStatuses"
                         }
                     }
                 }))
@@ -645,6 +667,7 @@ async fn main() -> std::io::Result<()> {
                             .route("/{id}", web::put().to(update_task))
                             .route("/{id}", web::delete().to(delete_task))
                     )
+                    .service(web::resource("/taskStatuses").route(web::get().to(get_task_statuses)))
             )
     })
     .bind("127.0.0.1:8080")?

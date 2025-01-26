@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Task Title"
+            android:fontFamily="@font/figtree_bold"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -27,7 +28,9 @@
             android:id="@+id/tvTaskDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/figtree_regular"
             android:layout_marginTop="4dp"
+            android:textColor="@color/gray_dark"
             android:text="Task Description" />
 
 
@@ -47,7 +50,10 @@
                 android:gravity="start"
                 android:layout_marginTop="4dp"
                 android:text="Status"
-                android:textStyle="italic" />
+                android:textColor="@color/orange_dark"
+                android:textAllCaps="true"
+                android:fontFamily="@font/figtree_bold"
+               />
 
             <TextView
                 android:id="@+id/tvTaskDueDate"
@@ -57,7 +63,9 @@
                 android:gravity="end"
                 android:layout_marginTop="4dp"
                 android:text="Due Date"
-                android:textStyle="italic" />
+                android:textColor="@color/gray_dark"
+                android:fontFamily="@font/figtree_regular"
+                 />
         </LinearLayout>
 
 

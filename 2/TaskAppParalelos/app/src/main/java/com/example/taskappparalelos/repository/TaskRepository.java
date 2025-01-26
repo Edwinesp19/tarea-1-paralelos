@@ -1,8 +1,10 @@
 package com.example.taskappparalelos.repository;
 
 import com.example.taskappparalelos.api.ITaskService;
+import com.example.taskappparalelos.api.ITaskStatusService;
 import com.example.taskappparalelos.model.TaskBody;
 import com.example.taskappparalelos.model.TaskResponse;
+import com.example.taskappparalelos.model.TaskStatusResponse;
 import com.example.taskappparalelos.network.RetrofitClientInstance;
 
 import java.util.List;
@@ -13,10 +15,7 @@ import retrofit2.Response;
 
 public class TaskRepository {
 
-    public interface ITaskResponse {
-        void onResponse(List<TaskResponse.Task> tasks);
-        void onFailure(Throwable t);
-    }
+
 
     public void getTasks(ITaskResponse taskResponse) {
         ITaskService taskService = RetrofitClientInstance.getInstance().create(ITaskService.class);
@@ -81,8 +80,36 @@ public class TaskRepository {
         });
     }
 
+    public void getTaskStatuses(ITaskStatusesResponse statusesResponse) {
+        ITaskStatusService taskService = RetrofitClientInstance.getInstance().create(ITaskStatusService.class);
+        Call<TaskStatusResponse> call = taskService.getTaskStatus();
 
+        call.enqueue(new Callback<TaskStatusResponse>() {
+            @Override
+            public void onResponse(Call<TaskStatusResponse> call, Response<TaskStatusResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getStatuses() != null) {
+                    statusesResponse.onResponse(response.body().getStatuses());
+                } else {
+                    statusesResponse.onFailure(new Throwable(response.message()));
+                }
+            }
 
+            @Override
+            public void onFailure(Call<TaskStatusResponse> call, Throwable t) {
+                statusesResponse.onFailure(t);
+            }
+        });
+    }
+
+    public interface ITaskStatusesResponse {
+        void onResponse(List<TaskStatusResponse.TaskStatus> statuses);
+        void onFailure(Throwable t);
+    }
+
+    public interface ITaskResponse {
+        void onResponse(List<TaskResponse.Task> tasks);
+        void onFailure(Throwable t);
+    }
 
     public interface ITaskFormResponse {
         void onSuccess(String message);
