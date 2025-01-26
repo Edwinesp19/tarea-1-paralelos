@@ -16,21 +16,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:background="#FFF3E4"
             android:padding="16dp"
             >
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_back"
+                android:contentDescription="Volver"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                :tint="#ED8400" />
 
-            <TextView
-                android:id="@+id/textViewWelcome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Welcome!"
-                android:fontFamily="@font/figtree_regular"
-                android:textSize="20sp"
-                android:gravity="start"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="10dp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,10 +39,9 @@
                 android:textSize="32dp"
                 android:gravity="start"
                 android:fontFamily="@font/figtree_bold"
-                android:layout_marginStart="18dp"
                 android:textStyle="bold"
                 android:textColor="#ED8400"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginVertical="20dp" />
         </LinearLayout>
 <ScrollView
     android:layout_width="match_parent"

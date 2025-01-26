@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,18 +34,14 @@ public class TaskActivity extends AppCompatActivity {
     private FloatingActionButton fabAdd;
 
 
+    ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-        // Recuperar datos del intent (si se enviaron)
-        String username = getIntent().getStringExtra("username");
 
-// Mostrar los datos (opcional)
-        TextView textView = findViewById(R.id.textViewWelcome);
-        textView.setText("Welcome, " + username + "!");
-
+        btnBack = findViewById(R.id.btnBack);
 
         taskContainer = findViewById(R.id.taskContainer);
         progressBar = findViewById(R.id.progressBar);
@@ -57,6 +54,13 @@ public class TaskActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(view -> {
             Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
             startActivity(intent);
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navBack();
+            }
         });
 
         mViewModel.getProgress().observe(this, new Observer<Integer>() {
@@ -138,5 +142,10 @@ public class TaskActivity extends AppCompatActivity {
         }} else {
             Toast.makeText(this, "No tasks available", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void navBack() {
+        setResult(RESULT_OK); // Indica que hubo un cambio en los datos
+        finish(); // Cierra la actividad actual
     }
 }

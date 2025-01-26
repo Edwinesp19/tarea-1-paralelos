@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
                 tvLoginResult.setText(s);
 
                 if(s == "Login Success"){
-                    Intent intent = new Intent(MainActivity.this, TaskActivity.class);
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
 
                     // Agregar datos al intent (opcional)
-                    intent.putExtra("username", "Edwin");
+                    intent.putExtra("username", "Edwin Espinal");
 
                     // Iniciar TaskActivity
                     startActivity(intent);
