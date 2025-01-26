@@ -50,6 +50,9 @@ public class TaskResponse {
         @SerializedName("status_id")
         private int statusId;
 
+
+
+
         // Getters y Setters
         public int getId() {
             return id;

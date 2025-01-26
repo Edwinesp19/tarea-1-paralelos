@@ -38,22 +38,47 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:gravity="center_vertical">
 
+            <LinearLayout
+
+                android:id="@+id/tvTaskStatusChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:orientation="horizontal"
+                android:padding="2dp"
+                android:paddingStart="8dp"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#FFF3E7"
+                android:background="@drawable/assign_card_background"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/tvTaskStatusChipIcon"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:backgroundTint="#FF9800"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/assign_card_background"
+                    >
+
+                </LinearLayout>
+
             <TextView
                 android:id="@+id/tvTaskStatus"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:layout_marginTop="4dp"
+                android:gravity="center"
                 android:text="Status"
-                android:textColor="@color/orange_dark"
+                android:paddingEnd="8dp"
+                android:paddingVertical="2dp"
+                android:textColor="#FF9800"
                 android:textAllCaps="true"
                 android:fontFamily="@font/figtree_bold"
-               />
+                /></LinearLayout>
 
             <TextView
                 android:id="@+id/tvTaskDueDate"

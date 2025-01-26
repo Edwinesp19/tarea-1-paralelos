@@ -1,6 +1,7 @@
 package com.example.taskappparalelos.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.example.taskappparalelos.model.Task;
 import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.viewmodel.TaskViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
@@ -53,7 +55,8 @@ public class TaskActivity extends AppCompatActivity {
         // Manejar el clic del botón flotante
         fabAdd.setOnClickListener(view -> {
             Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
-            startActivity(intent);
+//            startActivity(intent);
+            startActivityForResult(intent, 1);
         });
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +92,6 @@ public class TaskActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Recargar la lista de tareas
             mViewModel.fetchTasks();
         }
     }
@@ -110,6 +112,18 @@ public class TaskActivity extends AppCompatActivity {
             TextView tvDescription = taskView.findViewById(R.id.tvTaskDescription);
             TextView tvDueDate = taskView.findViewById(R.id.tvTaskDueDate);
             TextView tvStatus = taskView.findViewById(R.id.tvTaskStatus);
+            LinearLayout tvStatusChip = taskView.findViewById(R.id.tvTaskStatusChip);
+            LinearLayout tvTaskStatusChipIcon = taskView.findViewById(R.id.tvTaskStatusChipIcon);
+
+            if(task.getStatusId() ==2 ){
+                tvStatusChip.setBackgroundColor(Color.parseColor("#DCFFDE"));
+                tvStatus.setTextColor(Color.parseColor("#1F9524"));
+                tvTaskStatusChipIcon.setBackgroundColor(Color.parseColor("#1F9524"));
+            }else{
+                tvStatusChip.setBackgroundColor(Color.parseColor("#FFF3E7"));
+                tvStatus.setTextColor(Color.parseColor("#FF8E00"));
+                tvTaskStatusChipIcon.setBackgroundColor(Color.parseColor("#FF8E00"));
+            }
 
             tvTitle.setText(task.getTitle());
             tvDescription.setText(task.getDescription());
@@ -132,7 +146,7 @@ public class TaskActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
                     intent.putExtra("task", taskData);
-                    startActivityForResult(intent, 1); // Código de solicitud 1
+                    startActivityForResult(intent, 1);
                 }
             });
 

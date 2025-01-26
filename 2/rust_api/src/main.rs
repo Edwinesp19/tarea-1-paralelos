@@ -506,14 +506,21 @@ struct TaskResponse {
     description: String,
     status: String,
     date_from: String,
-    due_date: String,
+    due_date: String
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+struct UserList {
+    id: i32,
+    name: String,
+    email: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct User {
     name: String,
-    email: String, 
-    password: String,
+    email: String,
+    password: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -885,6 +892,23 @@ async fn get_task_statuses(pool: web::Data<Pool>) -> Result<HttpResponse, Error>
     })))
 }
 
+async fn list_users(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    let mut conn = pool.get_conn()
+        .map_err(|e| ApiError::DbError(e))?;
+    
+    let users: Vec<UserList> = conn
+        .query_map(
+            "SELECT id, name, email FROM users ORDER BY id",
+            |(id, name, email)| UserList { id, name, email }
+        )
+        .map_err(|e| ApiError::DbError(e))?;
+    
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "success": true,
+        "users": users
+    })))
+}
+
 fn get_connection_string() -> String {
     let db_user = env::var("DB_USER").expect("DB_USER must be set");
     let db_password = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
@@ -976,6 +1000,7 @@ async fn main() -> std::io::Result<()> {
                             .route("/{id}", web::delete().to(delete_task))
                     )
                     .service(web::resource("/taskStatuses").route(web::get().to(get_task_statuses)))
+                    .service(web::resource("/users").route(web::get().to(list_users)))
             )
     })
     .bind("127.0.0.1:8080")?

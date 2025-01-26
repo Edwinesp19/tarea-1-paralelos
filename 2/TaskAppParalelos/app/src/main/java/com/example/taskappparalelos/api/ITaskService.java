@@ -2,6 +2,7 @@ package com.example.taskappparalelos.api;
 
 import com.example.taskappparalelos.model.LoginBody;
 import com.example.taskappparalelos.model.LoginResponse;
+import com.example.taskappparalelos.model.TaskAssignmentsResponse;
 import com.example.taskappparalelos.model.TaskBody;
 import com.example.taskappparalelos.model.TaskResponse;
 
@@ -22,4 +23,8 @@ public interface ITaskService {
 
     @PUT("/api/tasks/{id}")
     Call<Void> updateTask(@Path("id") int taskId, @Body TaskBody taskBody);
+
+    @GET("/api/user/taskAssignments")
+    Call<TaskAssignmentsResponse> getTaskAssignments();
+
 }

@@ -2,6 +2,7 @@ package com.example.taskappparalelos.repository;
 
 import com.example.taskappparalelos.api.ITaskService;
 import com.example.taskappparalelos.api.ITaskStatusService;
+import com.example.taskappparalelos.model.TaskAssignmentsResponse;
 import com.example.taskappparalelos.model.TaskBody;
 import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.model.TaskStatusResponse;
@@ -37,6 +38,30 @@ public class TaskRepository {
             }
         });
     }
+
+    public void getTaskAssignments(ITaskAssignmentsResponse taskAssignmentsResponse) {
+        ITaskService taskService = RetrofitClientInstance.getInstance().create(ITaskService.class);
+        Call<TaskAssignmentsResponse> call = taskService.getTaskAssignments();
+
+        call.enqueue(new Callback<TaskAssignmentsResponse>() {
+            @Override
+            public void onResponse(Call<TaskAssignmentsResponse> call, Response<TaskAssignmentsResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getAssignments() != null) {
+                    taskAssignmentsResponse.onResponse(response.body().getAssignments());
+                } else {
+                    taskAssignmentsResponse.onFailure(new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TaskAssignmentsResponse> call, Throwable t) {
+                taskAssignmentsResponse.onFailure(t);
+            }
+        });
+    }
+
+
+
 
     public void saveTask(TaskBody taskBody, ITaskFormResponse taskResponse) {
         ITaskService taskService = RetrofitClientInstance.getInstance().create(ITaskService.class);
@@ -110,6 +135,12 @@ public class TaskRepository {
         void onResponse(List<TaskResponse.Task> tasks);
         void onFailure(Throwable t);
     }
+
+    public interface ITaskAssignmentsResponse {
+        void onResponse(List<TaskAssignmentsResponse.Assignment> assignments);
+        void onFailure(Throwable t);
+    }
+
 
     public interface ITaskFormResponse {
         void onSuccess(String message);
