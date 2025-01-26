@@ -1,0 +1,11 @@
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/liburl-b7833cd128dc6cbe.rmeta: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/host.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/origin.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/parser.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/path_segments.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/slicing.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/quirks.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/url-b7833cd128dc6cbe.d: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/host.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/origin.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/parser.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/path_segments.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/slicing.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/quirks.rs
+
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/lib.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/host.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/origin.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/parser.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/path_segments.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/slicing.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.4/src/quirks.rs:

@@ -1,5 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer, middleware::Logger};
-use actix_web::error::{Error, InternalError, JsonPayloadError, ErrorInternalServerError};
+use mysql::{Pool, TxOpts};
+use actix_web::error::{Error, ErrorInternalServerError};
 use std::env;
 use serde::{Deserialize, Serialize};
 use chrono::NaiveDateTime;
@@ -49,6 +50,52 @@ impl From<ApiError> for Error {
 struct TaskStatus {
     id: i32,
     name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UserUpdateRequest {
+    name: String,
+    email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TaskAssignmentRequest {
+    task_id: i32,
+    user_ids: Vec<i32>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct AssignedUser {
+    id: i32,
+    name: String,
+    email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TaskWithAssignments {
+    id: i32,
+    title: String,
+    description: String,
+    status_id: i32,
+    status: String,
+    date_from: String,
+    due_date: String,
+    assigned_users: Vec<AssignedUser>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UserAssignments {
+    user_id: i32,
+    user: AssignedUser,
+    tasks: Vec<TaskWithAssignments>,
+}
+
+#[derive(Debug, Serialize)]
+struct UserTaskAssignment {
+    user_id: i32,
+    name: String,
+    email: String,
+    tasks: Vec<TaskWithAssignments>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -210,39 +257,35 @@ async fn get_task(id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpRespo
     }
 }
 
-async fn get_all_tasks(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+async fn list_tasks(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     let mut conn = pool.get_conn()
         .map_err(|e| ApiError::DbError(e))?;
     
-    let tasks: Vec<(i32, String, String, i32, String, String, String)> = conn
-        .exec(
-            r"SELECT t.id, t.title, t.description, t.status_id, ts.name as status,
-            DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from,
-            DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date
+    let tasks: Vec<Task> = conn
+        .exec_map(
+            "SELECT t.id, t.title, t.description, t.status_id, 
+                    DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from, 
+                    DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date 
             FROM tasks t
-            JOIN task_statuses ts ON t.status_id = ts.id
+            LEFT JOIN task_statuses ts ON t.status_id = ts.id
             ORDER BY t.id",
-            ()
+            (),
+            |(id, title, description, status_id, date_from, due_date): (Option<i32>, String, Option<String>, i32, String, String)| {
+                Task {
+                    id,
+                    title,
+                    description,
+                    status_id,
+                    date_from,
+                    due_date,
+                }
+            },
         )
         .map_err(|e| ApiError::DbError(e))?;
     
-    let task_list: Vec<serde_json::Value> = tasks.into_iter()
-        .map(|(id, title, description, status_id, status, date_from, due_date)| {
-            serde_json::json!({
-                "id": id,
-                "title": title,
-                "description": description,
-                "status_id": status_id,
-                "status": status,
-                "date_from": date_from,
-                "due_date": due_date
-            })
-        })
-        .collect();
-    
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "success": true,
-        "tasks": task_list
+        "tasks": tasks
     })))
 }
 
@@ -366,6 +409,92 @@ async fn delete_task(id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpRe
             "message": format!("Error al eliminar la tarea: {}", e)
         })))
     }
+    }
+
+async fn get_user_task_assignments(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    let mut conn = pool.get_conn()
+        .map_err(|e| ApiError::DbError(e))?;
+
+    // First, get all users that have task assignments
+    let users: Vec<(i32, String, String)> = conn
+        .query_map(
+            "SELECT DISTINCT u.id, u.name, u.email 
+            FROM users u 
+            INNER JOIN task_assignments ta ON u.id = ta.user_id 
+            ORDER BY u.id",
+            |(id, name, email)| (id, name, email),
+        )
+        .map_err(|e| ApiError::DbError(e))?;
+
+    let mut user_assignments = Vec::new();
+
+    // For each user, get their tasks with all assignments
+    for (user_id, name, email) in users {
+        let tasks: Vec<TaskWithAssignments> = conn
+            .exec_map(
+                "SELECT t.id, t.title, COALESCE(t.description, '') as description, \
+                t.status_id, ts.name as status, \
+                DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from, \
+                DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date, \
+                GROUP_CONCAT(DISTINCT u2.id) as user_ids, \
+                GROUP_CONCAT(DISTINCT u2.name) as user_names, \
+                GROUP_CONCAT(DISTINCT u2.email) as user_emails \
+                FROM tasks t \
+                INNER JOIN task_assignments ta1 ON t.id = ta1.task_id AND ta1.user_id = ? \
+                LEFT JOIN task_assignments ta2 ON t.id = ta2.task_id \
+                LEFT JOIN users u2 ON ta2.user_id = u2.id \
+                LEFT JOIN task_statuses ts ON t.status_id = ts.id \
+                GROUP BY t.id",
+                (user_id,),
+                |(id, title, description, status_id, status, date_from, due_date, user_ids, user_names, user_emails)| {
+                    let assigned_users = if let (Some(ids), Some(names), Some(emails)) = (user_ids, user_names, user_emails) {
+                        let ids: String = ids;
+                        let names: String = names;
+                        let emails: String = emails;
+                        
+                        let ids: Vec<&str> = ids.split(',').collect();
+                        let names: Vec<&str> = names.split(',').collect();
+                        let emails: Vec<&str> = emails.split(',').collect();
+                        
+                        ids.iter()
+                            .zip(names.iter())
+                            .zip(emails.iter())
+                            .map(|((id, name), email)| AssignedUser {
+                                id: id.parse().unwrap_or(0),
+                                name: name.to_string(),
+                                email: email.to_string(),
+                            })
+                            .collect()
+                    } else {
+                        Vec::new()
+                    };
+
+                    TaskWithAssignments {
+                        id,
+                        title,
+                        description,
+                        status_id,
+                        status,
+                        date_from,
+                        due_date,
+                        assigned_users,
+                    }
+                },
+            )
+            .map_err(|e| ApiError::DbError(e))?;
+
+        user_assignments.push(UserTaskAssignment {
+            user_id,
+            name,
+            email,
+            tasks,
+        });
+    }
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "success": true,
+        "assignments": user_assignments
+    })))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -525,6 +654,218 @@ async fn register(user: web::Json<User>, pool: web::Data<Pool>) -> Result<HttpRe
     }))
 }
 
+async fn update_user(id: web::Path<i32>, user_data: web::Json<UserUpdateRequest>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+// Validate name
+if user_data.name.trim().is_empty() {
+return Ok(HttpResponse::BadRequest().json(serde_json::json!({
+    "success": false,
+    "message": "El nombre es requerido"
+})));
+}
+
+if user_data.name.len() < 2 {
+return Ok(HttpResponse::BadRequest().json(serde_json::json!({
+    "success": false,
+    "message": "El nombre debe tener al menos 2 caracteres"
+})));
+}
+
+if !is_valid_email(&user_data.email) {
+return Ok(HttpResponse::BadRequest().json(serde_json::json!({
+    "success": false,
+    "message": "Formato de correo inválido: debe contener @ y ."
+})));
+}
+
+let mut conn = pool.get_conn()
+.map_err(|e| ApiError::DbError(e))?;
+
+// Check if user exists
+let user_exists: Option<i32> = conn.exec_first(
+"SELECT id FROM users WHERE id = ?",
+(id.into_inner(),)
+).map_err(|e| ApiError::DbError(e))?;
+
+if user_exists.is_none() {
+return Ok(HttpResponse::NotFound().json(serde_json::json!({
+    "success": false,
+    "message": "Usuario no encontrado"
+})));
+}
+
+// Check if email is already taken by another user
+let existing_email: Option<(i32, String)> = conn.exec_first(
+"SELECT id, email FROM users WHERE email = ? AND id != ?",
+(&user_data.email, user_exists.unwrap())
+).map_err(|e| ApiError::DbError(e))?;
+
+if let Some((_, email)) = existing_email {
+return Ok(HttpResponse::Conflict().json(serde_json::json!({
+    "success": false,
+    "message": format!("El correo {} ya está en uso por otro usuario", email)
+})));
+}
+
+// Update user
+conn.exec_drop(
+"UPDATE users SET name = ?, email = ? WHERE id = ?",
+(&user_data.name, &user_data.email, user_exists.unwrap())
+).map_err(|e| ApiError::DbError(e))?;
+
+Ok(HttpResponse::Ok().json(serde_json::json!({
+"success": true,
+"message": "Usuario actualizado exitosamente"
+})))
+}
+
+async fn get_task_assignments(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    let mut conn = pool.get_conn()
+        .map_err(|e| ApiError::DbError(e))?;
+
+    let assignments: Vec<TaskWithAssignments> = conn
+        .query_map(
+            "SELECT t.id, t.title, COALESCE(t.description, '') as description, 
+                    t.status_id, ts.name as status, 
+                    DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from, 
+                    DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date,
+                    GROUP_CONCAT(DISTINCT u.id) as user_ids,
+                    GROUP_CONCAT(DISTINCT u.name) as user_names,
+                    GROUP_CONCAT(DISTINCT u.email) as user_emails
+            FROM tasks t
+            INNER JOIN task_assignments ta ON t.id = ta.task_id
+            INNER JOIN users u ON ta.user_id = u.id
+            LEFT JOIN task_statuses ts ON t.status_id = ts.id
+            GROUP BY t.id",
+            |(id, title, description, status_id, status, date_from, due_date, user_ids, user_names, user_emails)| {
+                let assigned_users = if let (Some(ids), Some(names), Some(emails)) = (user_ids, user_names, user_emails) {
+                    let ids: String = ids;
+                    let names: String = names;
+                    let emails: String = emails;
+                    
+                    let ids: Vec<&str> = ids.split(',').collect();
+                    let names: Vec<&str> = names.split(',').collect();
+                    let emails: Vec<&str> = emails.split(',').collect();
+                    
+                    ids.iter()
+                        .zip(names.iter())
+                        .zip(emails.iter())
+                        .map(|((id, name), email)| AssignedUser {
+                            id: id.parse().unwrap_or(0),
+                            name: name.to_string(),
+                            email: email.to_string(),
+                        })
+                        .collect()
+                } else {
+                    Vec::new()
+                };
+
+                TaskWithAssignments {
+                    id,
+                    title,
+                    description,
+                    status_id,
+                    status,
+                    date_from,
+                    due_date,
+                    assigned_users,
+                }
+            },
+        )
+        .map_err(|e| ApiError::DbError(e))?;
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "success": true,
+        "assignments": assignments
+    })))
+}
+
+async fn assign_users_to_task(
+    pool: web::Data<Pool>,
+    assignment: web::Json<TaskAssignmentRequest>,
+) -> Result<HttpResponse, Error> {
+    let mut conn = pool.get_conn()
+        .map_err(|e| ApiError::DbError(e))?;
+    
+    let mut tx = conn.start_transaction(TxOpts::default())
+        .map_err(|e| ApiError::DbError(e))?;
+
+    // Verify task exists
+    let task_exists: Option<i32> = tx
+        .exec_first(
+            "SELECT 1 FROM tasks WHERE id = ?",
+            (assignment.task_id,)
+        )
+        .map_err(|e| ApiError::DbError(e))?;
+
+    if task_exists.is_none() {
+        return Ok(HttpResponse::NotFound().json(serde_json::json!({
+            "success": false,
+            "message": "Task not found"
+        })));
+    }
+
+    // Verify all users exist
+    for user_id in &assignment.user_ids {
+        let user_exists: Option<i32> = tx
+            .exec_first(
+                "SELECT 1 FROM users WHERE id = ?",
+                (user_id,)
+            )
+            .map_err(|e| ApiError::DbError(e))?;
+
+        if user_exists.is_none() {
+            return Ok(HttpResponse::NotFound().json(serde_json::json!({
+                "success": false,
+                "message": format!("User with id {} not found", user_id)
+            })));
+        }
+    }
+    
+    if !assignment.user_ids.is_empty() {
+        // Get current assignments
+        let current_assignments: Vec<i32> = tx
+            .exec_map(
+                "SELECT user_id FROM task_assignments WHERE task_id = ?",
+                (assignment.task_id,),
+                |user_id: i32| user_id
+            )
+            .map_err(|e| ApiError::DbError(e))?;
+
+        // Remove assignments for users not in the new list
+        for current_user_id in current_assignments {
+            if !assignment.user_ids.contains(&current_user_id) {
+                tx.exec_drop(
+                    "DELETE FROM task_assignments WHERE task_id = ? AND user_id = ?",
+                    (assignment.task_id, current_user_id)
+                ).map_err(|e| ApiError::DbError(e))?;
+            }
+        }
+
+        // Insert new assignments
+        for user_id in &assignment.user_ids {
+            tx.exec_drop(
+                "INSERT IGNORE INTO task_assignments (task_id, user_id) VALUES (?, ?)",
+                (assignment.task_id, user_id)
+            ).map_err(|e| ApiError::DbError(e))?;
+        }
+    } else {
+        // If no users provided, remove all assignments
+        tx.exec_drop(
+            "DELETE FROM task_assignments WHERE task_id = ?",
+            (assignment.task_id,)
+        ).map_err(|e| ApiError::DbError(e))?;
+    }
+
+    tx.commit()
+        .map_err(|e| ApiError::DbError(e))?;
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "success": true,
+        "message": "Task assignments updated successfully"
+    })))
+}
+
+
 async fn get_task_statuses(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     let mut conn = pool.get_conn()
         .map_err(|e| ApiError::DbError(e))?;
@@ -542,35 +883,33 @@ async fn get_task_statuses(pool: web::Data<Pool>) -> Result<HttpResponse, Error>
     })))
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    // Load environment variables from .env file
-    dotenv::dotenv().ok();
-
-    // Initialize logger
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
-    
-    // Get database configuration from environment variables
+fn get_connection_string() -> String {
     let db_user = env::var("DB_USER").expect("DB_USER must be set");
     let db_password = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
     let db_host = env::var("DB_HOST").expect("DB_HOST must be set");
     let db_port = env::var("DB_PORT").expect("DB_PORT must be set");
     let db_name = env::var("DB_NAME").expect("DB_NAME must be set");
     
-    // Create database connection string
-    let database_url = format!(
+    format!(
         "mysql://{}:{}@{}:{}/{}",
         db_user, db_password, db_host, db_port, db_name
-    );
-    
-    // Database connection setup
-    let pool = Pool::new(database_url.as_str())
-        .expect("Failed to create pool");
+    )
+}
 
-    log::info!("Server starting on http://localhost:8080");
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Initialize logging
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
+    // Log startup information
+    log::info!("Starting HTTP server at http://localhost:8080");
     log::info!("Available endpoints:");
     log::info!("  POST /api/register - Register new user");
     log::info!("  POST /api/login - User login");
+    log::info!("  GET /api/taskAssignments - Get all task assignments");
+    log::info!("  POST /api/taskAssignments/assign - Assign users to task");
+    log::info!("  PUT /api/taskAssignments/remove - Remove users from task");
+    log::info!("  PUT /api/user/{{id}} - Update user");
     log::info!("  GET /api/tasks - List all tasks");
     log::info!("  POST /api/tasks - Create new task");
     log::info!("  GET /api/tasks/{{id}} - Get task details");
@@ -579,60 +918,12 @@ async fn main() -> std::io::Result<()> {
     log::info!("  GET /api/taskStatuses - Get all task statuses");
 
     HttpServer::new(move || {
-        // Log task routes registration
-        log::debug!("Registering task routes:");
-        log::debug!("  POST /api/tasks -> create_task");
-        log::debug!("  GET /api/tasks -> get_all_tasks");
-        log::debug!("  GET /api/tasks/{{id}} -> get_task");
-        log::debug!("  PUT /api/tasks/{{id}} -> update_task");
-        log::debug!("  DELETE /api/tasks/{{id}} -> delete_task");
-        log::debug!("  GET /api/taskStatuses -> get_task_statuses");
+        // Create MySQL pool
+        let pool = mysql::Pool::new(get_connection_string().as_str()).unwrap();
 
         App::new()
+            .app_data(web::Data::new(pool))
             .wrap(Logger::default())
-            .app_data(web::Data::new(pool.clone()))
-            .app_data(
-                web::JsonConfig::default()
-                    .limit(4096)
-                    .error_handler(|err, _| {
-                        let error_msg = match &err {
-                            JsonPayloadError::Serialize(e) => {
-                                format!("Failed to serialize response: {}", e)
-                            }
-                            JsonPayloadError::Deserialize(e) => {
-                                let err_string = e.to_string();
-                                if err_string.contains("missing field") {
-                                    let field = err_string
-                                        .split("missing field `").nth(1)
-                                        .and_then(|s| s.split('`').next())
-                                        .unwrap_or("unknown");
-                                    format!("Campo requerido faltante: {}", field)
-                                } else {
-                                    format!("Formato de datos inválido: {}", e)
-                                }
-                            }
-                            JsonPayloadError::Payload(e) => {
-                                format!("Error al leer los datos de la solicitud: {}", e)
-                            }
-                            JsonPayloadError::ContentType => {
-                                "Tipo de contenido inválido".to_string()
-                            }
-                            JsonPayloadError::Overflow { .. } => {
-                                "Datos de la solicitud muy grandes".to_string()
-                            }
-                            _ => "Formato JSON inválido".to_string()
-                        };
-                        
-                        let response = HttpResponse::BadRequest()
-                            .content_type("application/json")
-                            .json(serde_json::json!({
-                                "success": false,
-                                "message": error_msg,
-                            }));
-                            
-                        InternalError::from_response(err, response).into()
-                    })
-            )
             .service(web::resource("/").to(|| async {
                 HttpResponse::Ok().json(serde_json::json!({
                     "name": "Task Management API",
@@ -641,6 +932,9 @@ async fn main() -> std::io::Result<()> {
                         "auth": {
                             "register": "POST /api/register",
                             "login": "POST /api/login"
+                        },
+                        "users": {
+                            "update": "PUT /api/user/{id}"
                         },
                         "tasks": {
                             "list": "GET /api/tasks",
@@ -651,18 +945,30 @@ async fn main() -> std::io::Result<()> {
                         },
                         "taskStatuses": {
                             "list": "GET /api/taskStatuses"
+                        },
+                        "taskAssignments": {
+                            "list": "GET /api/taskAssignments",
+                            "assign": "POST /api/taskAssignments/assign",
+                            "remove": "PUT /api/taskAssignments/remove"
                         }
                     }
                 }))
             }))
             .service(
                 web::scope("/api")
-                    .service(web::resource("/login").route(web::post().to(login)))
                     .service(web::resource("/register").route(web::post().to(register)))
+                    .service(web::resource("/login").route(web::post().to(login)))
+                    .service(web::resource("/user/taskAssignments").route(web::get().to(get_user_task_assignments)))
+                    .service(web::resource("/user/{id}").route(web::put().to(update_user)))
+                    .service(
+                        web::scope("/taskAssignments")
+                            .route("", web::get().to(get_task_assignments))
+                            .route("/assign", web::post().to(assign_users_to_task))
+                    )
                     .service(
                         web::scope("/tasks")
                             .route("", web::post().to(create_task))
-                            .route("", web::get().to(get_all_tasks))
+                            .route("", web::get().to(list_tasks))
                             .route("/{id}", web::get().to(get_task))
                             .route("/{id}", web::put().to(update_task))
                             .route("/{id}", web::delete().to(delete_task))

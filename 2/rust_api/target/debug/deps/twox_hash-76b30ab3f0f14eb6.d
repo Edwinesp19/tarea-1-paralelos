@@ -1,0 +1,9 @@
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/libtwox_hash-76b30ab3f0f14eb6.rmeta: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/sixty_four.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/thirty_two.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/xxh3.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/std_support.rs
+
+/Users/edwinespinal/Documents/UTESA/Algoritmos-Paralelos/tarea-1-paralelos/2/rust_api/target/debug/deps/twox_hash-76b30ab3f0f14eb6.d: /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/lib.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/sixty_four.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/thirty_two.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/xxh3.rs /Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/std_support.rs
+
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/lib.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/sixty_four.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/thirty_two.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/xxh3.rs:
+/Users/edwinespinal/.cargo/registry/src/index.crates.io-6f17d22bba15001f/twox-hash-1.6.3/src/std_support.rs:

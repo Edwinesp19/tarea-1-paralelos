@@ -47,3 +47,19 @@ CREATE TABLE tasks (
 -- Añadir índices para búsquedas frecuentes
 CREATE INDEX idx_tasks_status ON tasks(status_id);
 CREATE INDEX idx_tasks_dates ON tasks(date_from, due_date);
+
+-- Crear tabla de asignaciones de tareas
+CREATE TABLE task_assignments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    task_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_task_user (task_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Añadir índices para búsquedas frecuentes en asignaciones
+CREATE INDEX idx_assignments_task ON task_assignments(task_id);
+CREATE INDEX idx_assignments_user ON task_assignments(user_id);
