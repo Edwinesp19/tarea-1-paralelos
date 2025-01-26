@@ -104,6 +104,7 @@ struct Task {
     title: String,
     description: Option<String>,
     status_id: i32,
+    status: Option<String>,
     date_from: String,
     due_date: String,
 }
@@ -263,19 +264,20 @@ async fn list_tasks(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     
     let tasks: Vec<Task> = conn
         .exec_map(
-            "SELECT t.id, t.title, t.description, t.status_id, 
+            "SELECT t.id, t.title, t.description, t.status_id, ts.name as status_name,
                     DATE_FORMAT(t.date_from, '%Y-%m-%d') as date_from, 
                     DATE_FORMAT(t.due_date, '%Y-%m-%d') as due_date 
             FROM tasks t
             LEFT JOIN task_statuses ts ON t.status_id = ts.id
             ORDER BY t.id",
             (),
-            |(id, title, description, status_id, date_from, due_date): (Option<i32>, String, Option<String>, i32, String, String)| {
+            |(id, title, description, status_id, status_name, date_from, due_date): (Option<i32>, String, Option<String>, i32, Option<String>, String, String)| {
                 Task {
                     id,
                     title,
                     description,
                     status_id,
+                    status: status_name,
                     date_from,
                     due_date,
                 }

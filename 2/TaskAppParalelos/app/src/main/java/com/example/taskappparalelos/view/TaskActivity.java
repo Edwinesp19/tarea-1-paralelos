@@ -20,6 +20,8 @@ import com.example.taskappparalelos.R;
 import com.example.taskappparalelos.model.Task;
 import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.viewmodel.TaskViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class TaskActivity extends AppCompatActivity {
     private TaskViewModel mViewModel;
     private LinearLayout taskContainer;
     private ProgressBar progressBar;
+    private FloatingActionButton fabAdd;
 
 
 
@@ -35,7 +38,6 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-
         // Recuperar datos del intent (si se enviaron)
         String username = getIntent().getStringExtra("username");
 
@@ -48,6 +50,14 @@ public class TaskActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         mViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+
+        fabAdd = findViewById(R.id.fab_add);
+
+        // Manejar el clic del botón flotante
+        fabAdd.setOnClickListener(view -> {
+            Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
+            startActivity(intent);
+        });
 
         mViewModel.getProgress().observe(this, new Observer<Integer>() {
             @Override

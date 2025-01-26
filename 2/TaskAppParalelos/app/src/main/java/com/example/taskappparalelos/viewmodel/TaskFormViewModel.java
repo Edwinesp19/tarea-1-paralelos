@@ -33,7 +33,7 @@ public class TaskFormViewModel extends ViewModel {
             @Override
             public void onSuccess(String message) {
                 mProgressMutableData.postValue(View.INVISIBLE);
-                mTaskResultMutableData.postValue("Task saved successfully: " + message);
+                mTaskResultMutableData.postValue(message);
             }
 
             @Override
