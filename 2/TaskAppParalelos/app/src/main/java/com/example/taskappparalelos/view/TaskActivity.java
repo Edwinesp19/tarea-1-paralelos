@@ -2,6 +2,7 @@ package com.example.taskappparalelos.view;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -115,14 +116,16 @@ public class TaskActivity extends AppCompatActivity {
             LinearLayout tvStatusChip = taskView.findViewById(R.id.tvTaskStatusChip);
             LinearLayout tvTaskStatusChipIcon = taskView.findViewById(R.id.tvTaskStatusChipIcon);
 
-            if(task.getStatusId() ==2 ){
-                tvStatusChip.setBackgroundColor(Color.parseColor("#DCFFDE"));
+            if (task.getStatusId() == 2) {
+                // Estado completado
+                tvStatusChip.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DCFFDE")));
+                tvTaskStatusChipIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1F9524")));
                 tvStatus.setTextColor(Color.parseColor("#1F9524"));
-                tvTaskStatusChipIcon.setBackgroundColor(Color.parseColor("#1F9524"));
-            }else{
-                tvStatusChip.setBackgroundColor(Color.parseColor("#FFF3E7"));
+            } else {
+                // Otro estado
+                tvStatusChip.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFF3E7")));
+                tvTaskStatusChipIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FF8E00")));
                 tvStatus.setTextColor(Color.parseColor("#FF8E00"));
-                tvTaskStatusChipIcon.setBackgroundColor(Color.parseColor("#FF8E00"));
             }
 
             tvTitle.setText(task.getTitle());

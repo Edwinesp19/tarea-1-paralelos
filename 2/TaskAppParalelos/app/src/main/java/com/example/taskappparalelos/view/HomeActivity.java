@@ -10,7 +10,7 @@ import com.example.taskappparalelos.R;
 
 public class HomeActivity extends AppCompatActivity {
 
-    LinearLayout cardTasks,cardUsers,cardAssign;
+    LinearLayout cardTasks,cardUsers,cardAssign,cardImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +24,7 @@ public class HomeActivity extends AppCompatActivity {
         cardTasks = findViewById(R.id.linearLayoutTask);
         cardUsers = findViewById(R.id.linearLayoutUser);
         cardAssign = findViewById(R.id.linearLayoutAssign);
+        cardImage = findViewById(R.id.linearLayoutLoadPhotos);
 
         cardTasks.setOnClickListener(view -> {
             Intent intent = new Intent(HomeActivity.this, TaskActivity.class);
@@ -37,6 +38,10 @@ public class HomeActivity extends AppCompatActivity {
 
         cardAssign.setOnClickListener(view -> {
             Intent intent = new Intent(HomeActivity.this, TaskAssignedActivity.class);
+            startActivity(intent);
+        });
+        cardImage.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeActivity.this, ImageActivity.class);
             startActivity(intent);
         });
     }

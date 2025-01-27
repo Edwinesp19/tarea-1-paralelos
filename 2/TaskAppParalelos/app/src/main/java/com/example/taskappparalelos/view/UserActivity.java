@@ -91,8 +91,27 @@ public class UserActivity extends AppCompatActivity {
             for (UserResponse.User user : users) {
                 View userView = LayoutInflater.from(this).inflate(R.layout.item_user, userContainer, false);
 
+                TextView tvNameInitials = userView.findViewById(R.id.tvUserNameInitials);
                 TextView tvName = userView.findViewById(R.id.tvUserName);
                 TextView tvEmail = userView.findViewById(R.id.tvUserEmail);
+
+                String[] strArray = user.getName().split(" ");
+                StringBuilder builder = new StringBuilder();
+
+//First name
+                if (strArray.length > 0){
+                    builder.append(strArray[0], 0, 1);
+                }
+//Middle name
+                if (strArray.length > 1){
+                    builder.append(strArray[1], 0, 1);
+                }
+//Surname
+                if (strArray.length > 2){
+                    builder.append(strArray[2], 0, 1);
+                }
+
+                tvNameInitials.setText(builder.toString());
 
                 tvName.setText(user.getName());
                 tvEmail.setText(user.getEmail());

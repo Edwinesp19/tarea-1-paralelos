@@ -1,4 +1,9 @@
 use actix_web::{web, App, HttpResponse, HttpServer, middleware::Logger};
+use actix_multipart::Multipart;
+use futures::TryStreamExt;
+use uuid::Uuid;
+use std::io::Write;
+use std::path::Path;
 use mysql::{Pool, TxOpts};
 use actix_web::error::{Error, ErrorInternalServerError};
 use std::env;
@@ -16,6 +21,7 @@ pub enum ApiError {
     DbError(mysql::Error),
     BcryptError(bcrypt::BcryptError),
     ValidationError(String),
+    FileError(String),
 }
 
 impl fmt::Display for ApiError {
@@ -24,6 +30,7 @@ impl fmt::Display for ApiError {
             ApiError::DbError(e) => write!(f, "Database error: {}", e),
             ApiError::BcryptError(e) => write!(f, "Bcrypt error: {}", e),
             ApiError::ValidationError(e) => write!(f, "{}", e),
+            ApiError::FileError(e) => write!(f, "File error: {}", e),
         }
     }
 }
@@ -909,6 +916,60 @@ async fn list_users(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     })))
 }
 
+async fn upload_images(mut payload: Multipart) -> Result<HttpResponse, Error> {
+    let mut paths = Vec::new();
+    let uploads_dir = Path::new("./uploads");
+
+    // Create uploads directory if it doesn't exist
+    if !uploads_dir.exists() {
+        std::fs::create_dir_all(uploads_dir)
+            .map_err(|e| ApiError::FileError(format!("Failed to create uploads directory: {}", e)))?;
+    }
+
+    // Process each field in the multipart form data
+    while let Some(mut field) = payload.try_next().await.map_err(|e| ApiError::FileError(e.to_string()))? {
+        let content_type = field.content_disposition();
+        
+        let filename = content_type
+            .get_filename()
+            .ok_or_else(|| ApiError::FileError("No filename provided".to_string()))?;
+
+        // Generate unique filename
+        let uuid = Uuid::new_v4();
+        let extension = Path::new(filename)
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .unwrap_or("bin");
+        let new_filename = format!("{}.{}", uuid, extension);
+        let filepath = uploads_dir.join(&new_filename);
+
+        // Create file
+        let mut file = std::fs::File::create(&filepath)
+            .map_err(|e| ApiError::FileError(format!("Failed to create file: {}", e)))?;
+
+        // Write file contents
+        while let Some(chunk) = field.try_next().await.map_err(|e| ApiError::FileError(e.to_string()))? {
+            file.write_all(&chunk)
+                .map_err(|e| ApiError::FileError(format!("Failed to write file: {}", e)))?;
+        }
+
+        paths.push(format!("/uploads/{}", new_filename));
+    }
+
+    if paths.is_empty() {
+        Ok(HttpResponse::BadRequest().json(serde_json::json!({
+            "success": false,
+            "message": "No files were uploaded"
+        })))
+    } else {
+        Ok(HttpResponse::Ok().json(serde_json::json!({
+            "success": true,
+            "message": "Files uploaded successfully",
+            "paths": paths
+        })))
+    }
+}
+
 fn get_connection_string() -> String {
     let db_user = env::var("DB_USER").expect("DB_USER must be set");
     let db_password = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
@@ -1001,9 +1062,10 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(web::resource("/taskStatuses").route(web::get().to(get_task_statuses)))
                     .service(web::resource("/users").route(web::get().to(list_users)))
+                    .service(web::resource("/images").route(web::post().to(upload_images)))
             )
     })
     .bind("127.0.0.1:8080")?
     .run()
     .await
-}
+    }
