@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.taskappparalelos.R;
 import com.example.taskappparalelos.model.TaskAssignmentsResponse;
+import com.example.taskappparalelos.model.TaskResponse;
 import com.example.taskappparalelos.viewmodel.TaskAssignedViewModel;
 import java.util.List;
 
@@ -91,6 +92,8 @@ public class TaskAssignedActivity extends AppCompatActivity {
                 tvName.setText(assignment.getName());
                 tvEmail.setText(assignment.getEmail());
                 tvTaskCount.setText(assignment.getTasks().size() + " Tareas");
+
+
 
                 assignmentContainer.addView(assignmentView);
             }

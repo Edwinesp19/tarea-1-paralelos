@@ -76,16 +76,16 @@
     </ScrollView>
         </LinearLayout>
 
-    <!-- Floating Action Button -->
-<com.google.android.material.floatingactionbutton.FloatingActionButton
-android:id="@+id/fab_add"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_gravity="bottom|end"
-android:layout_margin="16dp"
-android:elevation="0dp"
-android:src="@drawable/ic_add"
-android:contentDescription="Agregar tarea"
-android:backgroundTint="#00BCD4"
-app:tint="#FFFFFF" />
+<!--    &lt;!&ndash; Floating Action Button &ndash;&gt;-->
+<!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--android:id="@+id/fab_add"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:layout_gravity="bottom|end"-->
+<!--android:layout_margin="16dp"-->
+<!--android:elevation="0dp"-->
+<!--android:src="@drawable/ic_add"-->
+<!--android:contentDescription="Agregar tarea"-->
+<!--android:backgroundTint="#00BCD4"-->
+<!--app:tint="#FFFFFF" />-->
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

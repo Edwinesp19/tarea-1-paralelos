@@ -19,4 +19,12 @@ public class RetrofitClientInstance {
         return retrofit;
 
     }
+
+    // Instancia para URLs específicas
+    public static Retrofit getInstanceWithUrl(String baseUrl) {
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
 }
