@@ -1,0 +1,14 @@
+﻿  main.cpp
+C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(58,17): error C2660: 'importTasksFromCSV': la función no acepta 3 argumentos
+      C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(15,6):
+      vea la declaración de 'importTasksFromCSV'
+      C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(58,17):
+      al hacer coincidir la lista de argumentos '(sqlite3 *, const char [10], int)'
+  
+C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(69,13): error C2660: 'importTasksFromCSV': la función no acepta 3 argumentos
+      C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(15,6):
+      vea la declaración de 'importTasksFromCSV'
+      C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(69,13):
+      al hacer coincidir la lista de argumentos '(sqlite3 *, const char [10], int)'
+  
+C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(150,20): warning C4244: 'inicializando': conversión de 'sqlite3_int64' a 'int'; posible pérdida de datos
