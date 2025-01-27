@@ -1,9 +1,10 @@
 ﻿  main.cpp
-C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(209,15): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
-C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(225,20): warning C4244: 'inicializando': conversión de 'sqlite3_int64' a 'int'; posible pérdida de datos
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(256,15): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\main.cpp(272,20): warning C4244: 'inicializando': conversión de 'sqlite3_int64' a 'int'; posible pérdida de datos
   Generando código
-  2 of 2857 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  4 of 2865 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    85 functions had inline decision re-evaluated but remain unchanged
+    87 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
   CppTaskAppParalelo.vcxproj -> C:\Users\Edwin\Desktop\Parelelos\tarea-1-paralelos\2\CppTask\CppTaskAppParalelo\x64\Release\CppTaskAppParalelo.exe

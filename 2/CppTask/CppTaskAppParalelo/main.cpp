@@ -6,7 +6,14 @@
 #include <string>
 #include <ctime>
 #include <chrono>
+#include <mutex>
+#include <filesystem> 
+
+
+
 #include "sqlite/sqlite3.h"
+std::mutex dbMutex;
+
 
 void createDatabase(sqlite3* db);
 void menu(sqlite3* db);
@@ -16,10 +23,10 @@ void listTasks(sqlite3* db);
 void insertTaskManually(sqlite3* db);
 void importTasksFromCSV(sqlite3* db, const std::string& filename, int numTasks);
 
-void parallelProcess(sqlite3* db);
+void parallelProcess(sqlite3* db,bool autoCreate);
 void createRandomTaskProccess(sqlite3* db);
 void assignTaskRandomUserProccess(sqlite3* db);
-void saveTasksToFileProccess(sqlite3* db);
+void saveTasksToFileProcess(sqlite3* db);
 
 void simulateProcessing(int seconds);
 
@@ -78,11 +85,11 @@ void menu(sqlite3* db) {
             std::cout << "Selecciona una opción: ";
             std::cin >> processChoice;
 
-            if (processChoice == 1) {
-                parallelProcess(db);
+            if (processChoice == 1) { 
+                insertTaskManually(db);
             }
             else if (processChoice == 2) {
-                parallelProcess(db);
+                parallelProcess(db,true);
             }
             break;
         case 5:
@@ -94,23 +101,25 @@ void menu(sqlite3* db) {
     } while (option != 5);
 }
 
-void parallelProcess(sqlite3* db) {
+void parallelProcess(sqlite3* db,bool autoCreate) {
     using namespace std::chrono;
 
     auto start = high_resolution_clock::now();
     std::cout << "\033[33m\n\n-> INICIANDO PROCESOS EN HILOS...\n.\033[0m";
+    if (autoCreate) {
+        // Crear tarea en un hilo separado
 
-    // Crear tarea en un hilo separado
-    std::thread createThread(createRandomTaskProccess, db );
+        std::thread createThread(createRandomTaskProccess, db);
+        createThread.join();
+    } 
 
     // Asignar una tarea a un  usuario en otro hilo separado
     std::thread assignThread(assignTaskRandomUserProccess, db );
 
     // Guardar lista de tareas en archivo (otro hilo)
-    std::thread saveFileThread(saveTasksToFileProccess, db);
+    std::thread saveFileThread(saveTasksToFileProcess, db);
   
-    // Esperar a que ambos hilos terminen
-    createThread.join();
+    // Esperar a que ambos hilos terminen 
     assignThread.join();
     saveFileThread.join();
    
@@ -154,17 +163,21 @@ void assignTaskRandomUserProccess(sqlite3* db) {
     std::cout << "\n -> Proceso de asignación de usuario completado en " << duration.count() << " ms.\n";
 }
 
-void saveTasksToFileProccess(sqlite3* db) {
-    using namespace std::chrono;
+// Guardar tareas en archivo (proceso)
+void saveTasksToFileProcess(sqlite3* db) {
+    std::lock_guard<std::mutex> lock(dbMutex);
+        using namespace std::chrono;
+
     auto start = high_resolution_clock::now();
-
-    std::cout << "> Iniciando guardado de tareas en archivo...\n";
-     
-
     const char* selectSQL = "SELECT id, title, description FROM tasks;";
     sqlite3_stmt* stmt;
 
     std::ofstream outFile("tasks_list.txt");
+    if (!outFile.is_open()) {
+        std::cerr << "Error al abrir el archivo para escritura.\n";
+        return;
+    }
+
     sqlite3_prepare_v2(db, selectSQL, -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int id = sqlite3_column_int(stmt, 0);
@@ -175,13 +188,10 @@ void saveTasksToFileProccess(sqlite3* db) {
     sqlite3_finalize(stmt);
 
     outFile.close();
-
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end - start);
-
-    std::cout << "\n-> Tareas guardadas en archivo en " << duration.count() << " ms.\n";
+     std::cout << "\n-> Tareas guardadas en archivo en " << duration.count() << " ms.\n";
 }
-
 
 void listTasks(sqlite3* db) {
     const char* selectSQL = "SELECT id, title, description FROM tasks;";
@@ -230,7 +240,7 @@ std::string createRandomTask(sqlite3* db) {
         result = "Error al crear tarea: " + std::string(sqlite3_errmsg(db));
     }
 
-    sqlite3_finalize(stmt);
+    sqlite3_finalize(stmt); 
     return result;
 }
 
@@ -307,8 +317,9 @@ void insertTaskManually(sqlite3* db) {
     }
 
     sqlite3_finalize(stmt);
-    parallelProcess(db);
+    parallelProcess(db,false);
 }
+
 
 void importTasksFromCSV(sqlite3* db, const std::string& filename, int numTasks) {
     std::ifstream file(filename);

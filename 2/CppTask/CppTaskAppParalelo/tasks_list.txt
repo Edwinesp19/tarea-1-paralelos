@@ -43,3 +43,8 @@ ID: 42, Título: Tarea 2, Descripción: Descripción 1
 ID: 43, Título: Tarea 4, Descripción: Descripción 2
 ID: 44, Título: Tarea de paralelo, Descripción: descripcion de tarea
 ID: 45, Título: Tarea 1, Descripción: Descripción 3
+ID: 46, Título: Tarea 4, Descripción: Descripción 1
+ID: 47, Título: Tarea 4, Descripción: Descripción 2
+ID: 48, Título: holaa, Descripción: prueba
+ID: 49, Título: tareaaa, Descripción: detaleee
+ID: 50, Título: Tarea 1, Descripción: Descripción 4
